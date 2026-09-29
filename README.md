@@ -2,7 +2,9 @@
 
 根据五张实景照片重建的可交互村庄，使用 Three.js 与 Vite，部署到 GitHub Pages。
 
-**在线访问：[doctorabcdef.github.io/map](https://doctorabcdef.github.io/map/)**
+**新增：[照片实景深度预览](https://doctorabcdef.github.io/map/real/)**：直接保留五张原照片的外观，支持 AI 深度驱动的小范围视角变化。这是独立预览，不是完整实景扫描，也不是训练过的高斯泼溅模型。[技术与范围说明](docs/real-photo-preview.md)。
+
+**原几何模型在线访问：[doctorabcdef.github.io/map](https://doctorabcdef.github.io/map/)**
 
 ## 可以做什么
 

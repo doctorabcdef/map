@@ -1,0 +1,13 @@
+{
+  "name": "lane",
+  "width": 1279,
+  "height": 1706,
+  "depthWidth": 480,
+  "depthHeight": 640,
+  "method": "Depth Anything V2 Small",
+  "geometry": "AI-estimated relative depth, not a measured scan",
+  "seconds": 0.98,
+  "p5": 0.09222736209630966,
+  "p50": 0.4040480852127075,
+  "p95": 0.9430872797966003
+}

@@ -1,0 +1,13 @@
+{
+  "name": "courtyard",
+  "width": 1279,
+  "height": 1706,
+  "depthWidth": 480,
+  "depthHeight": 640,
+  "method": "Depth Anything V2 Small",
+  "geometry": "AI-estimated relative depth, not a measured scan",
+  "seconds": 1.13,
+  "p5": 0.07152923941612244,
+  "p50": 0.31556206941604614,
+  "p95": 0.9332990050315857
+}

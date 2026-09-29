@@ -1,0 +1,13 @@
+{
+  "name": "village",
+  "width": 1279,
+  "height": 1706,
+  "depthWidth": 480,
+  "depthHeight": 640,
+  "method": "Depth Anything V2 Small",
+  "geometry": "AI-estimated relative depth, not a measured scan",
+  "seconds": 1.08,
+  "p5": 0.020974064245820045,
+  "p50": 0.4349110722541809,
+  "p95": 0.9026902318000793
+}

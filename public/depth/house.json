@@ -1,0 +1,13 @@
+{
+  "name": "house",
+  "width": 2275,
+  "height": 1280,
+  "depthWidth": 640,
+  "depthHeight": 360,
+  "method": "Depth Anything V2 Small",
+  "geometry": "AI-estimated relative depth, not a measured scan",
+  "seconds": 1.8,
+  "p5": 0.17615026235580444,
+  "p50": 0.526606559753418,
+  "p95": 0.8537760376930237
+}

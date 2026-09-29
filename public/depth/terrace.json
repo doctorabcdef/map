@@ -1,0 +1,13 @@
+{
+  "name": "terrace",
+  "width": 1279,
+  "height": 1706,
+  "depthWidth": 480,
+  "depthHeight": 640,
+  "method": "Depth Anything V2 Small",
+  "geometry": "AI-estimated relative depth, not a measured scan",
+  "seconds": 1.03,
+  "p5": 0.0,
+  "p50": 0.21971948444843292,
+  "p95": 0.725380003452301
+}

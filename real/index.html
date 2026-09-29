@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><meta name="theme-color" content="#171b1a"/><title>实景深度预览 · 归乡</title><meta name="description" content="保留五张原始照片外观，通过 AI 估算深度进行小范围空间视角预览。独立照片点位，非完整三维扫描。"/><link rel="icon" href="../favicon.svg"/></head>
+<body>
+ <header><div class="brand"><span class="brand-icon">⌂</span><span><strong>归乡 <i>/</i> 实景深度预览</strong><small>原始照片外观 · AI 估算空间深度</small></span></div><button id="about-open" class="quiet-button">说明 <span>ⓘ</span></button></header>
+ <main id="stage" aria-label="照片深度三维预览"><div id="photo-frame"><img id="original" alt="房屋原始照片"/><div id="render-target"></div><div id="loading" role="status"><span class="spinner"></span><span id="loading-text">准备实景深度…</span></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div><span class="photo-mode" id="photo-mode">空间视图</span></main>
+ <section class="view-info"><span id="count">01 / 05</span><div><h1 id="view-title">蓝瓦小楼</h1><p id="hint">拖动画面，查看照片附近的小范围视差</p></div><button id="reset" class="quiet-button">复位</button></section>
+ <nav class="controls" aria-label="观看模式"><button id="depth-mode" class="selected" aria-pressed="true">空间视图</button><button id="original-mode" aria-pressed="false">原始照片</button><span class="separator"></span><button id="auto" aria-pressed="false">缓慢环视</button></nav>
+ <nav id="views" class="views" aria-label="五处独立照片点位"></nav>
+ <footer><span>5 个独立照片视点 · 深度由 AI 推测</span><button id="limits-open">不是完整扫描，了解范围</button></footer>
+ <div id="toast" role="status"></div>
+ <dialog id="about"><button id="about-close" aria-label="关闭说明">×</button><small>WHAT YOU ARE SEEING</small><h2>照片里的真实外观，<br/>有限范围的空间预览。</h2><p>这里直接使用你提供的原始照片作为颜色，通过 AI 估算每个区域的远近，再生成可小幅换角度查看的三维表面。</p><p><strong>这不是完整的 3D 实景扫描。</strong>深度、相机参数和空间尺度均为推测。栏杆、树叶、车辆边缘在移动时可能出现拉伸；照片没有拍到的背面和遮挡区域无法恢复，因此限制了移动范围。</p><p>这五处是独立的照片视点，没有伪造它们之间的真实坐标，也不能连续走遍村庄。“原始照片”可随时对照输入图片。</p><p>要得到可以绕行的完整实景，需要沿房屋、转角与院落连续移动拍摄的清晰素材，或现成的实景扫描模型。</p><a href="https://github.com/doctorabcdef/map/blob/main/docs/real-photo-preview.md" target="_blank" rel="noopener noreferrer">查看重建方式与范围说明 ↗</a></dialog>
+ <script type="module" src="/src/real.js"></script>
+</body></html>
