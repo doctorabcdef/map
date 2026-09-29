@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#182c26" />
+  <meta name="description" content="根据五张家乡照片重建的三维村庄。转动视角，走过院落，在手机和电脑上重访熟悉的地方。" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <title>归乡 · 3D 村庄地图</title>
+</head>
+<body>
+  <main id="world" aria-label="可交互的三维村庄地图"></main>
+  <div id="loading" role="status"><span class="loader-mark">⌂</span><strong>正在走近家乡</strong><span id="loading-detail">准备房屋、树木与田野…</span><div class="loading-track"><i></i></div></div>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="归乡首页"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m4 15 12-10 12 10M8 13v13h16V13M13 26v-9h6v9"/></svg></span><span><strong>归乡<span class="brand-divider"> / </span><small>3D 村庄地图</small></strong><em>五张照片，一处熟悉的地方</em></span></a>
+    <div class="header-actions"><button id="photos-open" class="glass-button"><span data-icon="image"></span><span>实景照片</span><b>5</b></button><button id="about-open" class="icon-button" aria-label="地图说明" title="地图说明"><span data-icon="info"></span></button></div>
+  </header>
+  <nav class="mode-switch" aria-label="探索模式"><button data-mode="orbit" class="active" aria-pressed="true"><span data-icon="orbit"></span>鸟瞰探索</button><button data-mode="walk" aria-pressed="false"><span data-icon="walk"></span>地面漫游</button></nav>
+  <aside class="places-panel" aria-label="场景地点">
+    <div class="panel-heading"><span>探索这片村庄</span><small>01 — 04</small></div>
+    <div class="places">
+      <button class="place active" data-place="home" aria-pressed="true"><img src="./photos/house.jpg" alt="蓝瓦白墙的家"/><span><small>01 · HOME</small><strong>蓝瓦小楼</strong><em>阳台、屋檐与熟悉的门窗</em></span><i>01</i></button>
+      <button class="place" data-place="yard" aria-pressed="false"><img src="./photos/courtyard.jpg" alt="院落与银色车辆"/><span><small>02 · COURTYARD</small><strong>门前小院</strong><em>砖墙边，停着那辆银色车</em></span><i>02</i></button>
+      <button class="place" data-place="lane" aria-pressed="false"><img src="./photos/village.jpg" alt="绿树掩映的村庄"/><span><small>03 · VILLAGE</small><strong>树荫村道</strong><em>穿过绿意，走进邻里之间</em></span><i>03</i></button>
+      <button class="place" data-place="field" aria-pressed="false"><img src="./photos/terrace.jpg" alt="屋后稻田与远山"/><span><small>04 · FIELDS</small><strong>田野远山</strong><em>从屋顶望向开阔的田野</em></span><i>04</i></button>
+    </div>
+    <p class="reconstruction-note">依据照片重建 · 非测绘地图</p>
+  </aside>
+  <div id="landmarks" aria-label="地图地点标记"><button class="landmark" data-pin="home"><i></i>蓝瓦小楼</button><button class="landmark" data-pin="lane"><i></i>树荫村道</button><button class="landmark" data-pin="field"><i></i>屋后稻田</button></div>
+  <aside class="map-tools" aria-label="地图工具">
+    <button id="zoom-in" class="tool" aria-label="放大" title="放大"><span data-icon="plus"></span></button><button id="zoom-out" class="tool" aria-label="缩小" title="缩小"><span data-icon="minus"></span></button><span class="tool-separator"></span>
+    <button id="reset" class="tool" aria-label="回到主楼" title="回到主楼"><span data-icon="home"></span></button><button id="rotate" class="tool" aria-label="自动环绕" title="自动环绕" aria-pressed="false"><span data-icon="rotate"></span></button><button id="fullscreen" class="tool" aria-label="全屏显示" title="全屏显示"><span data-icon="fullscreen"></span></button>
+  </aside>
+  <div class="map-inset"><div class="inset-title"><span>村庄导览</span><small>相对位置</small></div><canvas id="minimap" width="320" height="240" aria-label="显示主楼、村道、田野与观察位置的示意小地图"></canvas><span class="inset-key"><i></i>当前视点 <em>布局与距离为估算</em></span></div>
+  <footer class="bottom-bar"><div class="view-caption"><span class="caption-line"></span><span><small id="view-number">VIEW 01</small><strong id="view-name">蓝瓦小楼</strong></span></div><span id="control-hint">拖动旋转 · 滚轮缩放 · 右键平移</span><label class="quality-label">画质 <select id="quality" aria-label="画质"><option value="high">精细</option><option value="low">流畅</option></select></label></footer>
+  <div id="walk-ui" hidden><div class="crosshair" aria-hidden="true"></div><div id="joystick" aria-label="拖动摇杆移动" role="group"><span id="stick"></span></div><span class="walk-hint">左侧移动 · 右侧滑动环顾</span><button id="walk-home" class="glass-button">回到院子</button></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <dialog id="photos-dialog" aria-labelledby="photo-title"><button class="dialog-close" data-close="photos-dialog" aria-label="关闭照片"><span data-icon="close"></span></button><div class="photo-display"><img id="photo-large" src="./photos/house.jpg" alt="房屋参考照片"/><button id="photo-prev" class="photo-arrow prev" aria-label="上一张">‹</button><button id="photo-next" class="photo-arrow next" aria-label="下一张">›</button><span id="photo-counter">01 / 05</span></div><div class="photo-info"><span class="eyebrow">THE REAL PLACE · 原始照片</span><h2 id="photo-title">蓝瓦小楼</h2><p id="photo-description"></p><button id="photo-goto" class="primary-button">查看对应场景</button><div id="photo-thumbs" class="photo-thumbs"></div><p class="photo-note">五张照片是本次重建的依据。未拍到的建筑背面、尺寸与道路延伸均为估算补全。</p></div></dialog>
+  <dialog id="about-dialog" class="about-dialog" aria-labelledby="about-title"><button class="dialog-close" data-close="about-dialog" aria-label="关闭说明"><span data-icon="close"></span></button><span class="eyebrow">ABOUT THIS PLACE</span><h2 id="about-title">把熟悉的地方，留在眼前。</h2><p>根据你提供的 5 张照片，重建蓝瓦小楼、院落、村道与周围田野。可以从空中转动观察，也可以走到院子里看看。</p><div class="about-row"><strong>照片中可见</strong><p>白墙蓝瓦、退台阁楼、金属栏杆、银色车辆、砖墙、修补过的水泥路、邻宅与稻田。</p></div><div class="about-row"><strong>推测补全</strong><p>建筑背面与室内、实际尺寸、完整道路及周围房屋的精确位置。这里是依据照片的三维重建，不是摄影测量模型，也不含真实经纬度。</p></div><div class="about-row"><strong>如何探索</strong><p>电脑：拖动旋转，滚轮缩放，右键平移；漫游时 WASD / 方向键移动，拖动画面环顾。<br/>手机：单指旋转、双指缩放与平移；漫游时左摇杆移动、右侧滑动环顾。</p></div><a class="source-link" href="https://github.com/doctorabcdef/map" target="_blank" rel="noopener noreferrer">查看 GitHub 项目 ↗</a></dialog>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

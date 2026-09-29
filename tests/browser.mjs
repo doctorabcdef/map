@@ -1,0 +1,38 @@
+import {chromium} from '@playwright/test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+const base=process.env.MAP_URL||'http://localhost:5174/';
+const browser=await chromium.launch({executablePath:process.env.BROWSER_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true,args:['--enable-webgl']});
+const errors=[],failed=[];
+await fs.mkdir('artifacts',{recursive:true});
+function observe(page){page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});}
+const page=await browser.newPage({viewport:{width:1440,height:1000}});observe(page);
+await page.goto(base);await page.waitForFunction(()=>window.__map?.state.ready);await page.locator('#loading').waitFor({state:'hidden'});await page.waitForTimeout(900);
+await page.screenshot({path:'artifacts/map-desktop.jpg',quality:88});
+const initial=await page.evaluate(()=>window.__map.state);
+await page.mouse.move(850,410);await page.mouse.down();await page.mouse.move(1010,440,{steps:12});await page.mouse.up();await page.waitForTimeout(500);
+assert.notDeepEqual((await page.evaluate(()=>window.__map.state)).camera,initial.camera,'Orbit drag changes camera');
+await page.locator('#zoom-in').click();await page.waitForTimeout(500);await page.locator('[data-place=yard]').click();await page.waitForFunction(()=>!window.__map.state.transitioning,null,{timeout:30000});await page.screenshot({path:'artifacts/map-yard.jpg',quality:88});
+await page.locator('[data-place=lane]').click();await page.waitForFunction(()=>!window.__map.state.transitioning,null,{timeout:30000});await page.screenshot({path:'artifacts/map-village.jpg',quality:88});
+await page.locator('[data-place=field]').click();await page.waitForFunction(()=>!window.__map.state.transitioning,null,{timeout:30000});await page.screenshot({path:'artifacts/map-fields.jpg',quality:88});
+await page.locator('#photos-open').click();assert.equal(await page.locator('#photos-dialog').evaluate(e=>e.open),true);
+for(let i=0;i<5;i++){assert.equal(await page.locator('#photo-large').evaluate(e=>e.complete&&e.naturalWidth>0),true);await page.locator('#photo-next').click();await page.waitForTimeout(120);}
+await page.screenshot({path:'artifacts/map-photos.jpg',quality:85});await page.locator('[data-close=photos-dialog]').click();
+await page.locator('#reset').click();await page.waitForFunction(()=>!window.__map.state.transitioning,null,{timeout:30000});await page.locator('[data-mode=walk]').click();await page.locator('#world canvas').click({position:{x:780,y:520}});
+const start=await page.evaluate(()=>window.__map.state.position);await page.keyboard.down('w');await page.waitForFunction(z=>window.__map.state.position[2]<z-1,start[2],{timeout:25000});await page.keyboard.up('w');const moved=await page.evaluate(()=>window.__map.state.position);assert.ok(moved[2]<start[2]-1,'Desktop walk moves');
+await page.screenshot({path:'artifacts/map-walk.jpg',quality:88});await page.locator('[data-mode=orbit]').click();
+await page.locator('#quality').selectOption('low');assert.equal((await page.evaluate(()=>window.__map.state)).quality,'low');
+const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1});const mobile=await context.newPage();observe(mobile);
+await mobile.goto(base);await mobile.waitForFunction(()=>window.__map?.state.ready);await mobile.locator('#loading').waitFor({state:'hidden'});await mobile.waitForTimeout(500);await mobile.screenshot({path:'artifacts/map-mobile.jpg',quality:88});
+assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No mobile horizontal overflow');
+const cdp=await context.newCDPSession(mobile);const m0=await mobile.evaluate(()=>window.__map.state.camera);
+await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:180,y:340}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:245,y:370}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await mobile.waitForTimeout(400);
+assert.notDeepEqual(await mobile.evaluate(()=>window.__map.state.camera),m0,'Touch orbit works');
+const pinchStart=await mobile.evaluate(()=>window.__map.state.camera);
+await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:140,y:340},{x:230,y:380}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:100,y:320},{x:270,y:400}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await mobile.waitForTimeout(300);assert.notDeepEqual(await mobile.evaluate(()=>window.__map.state.camera),pinchStart,'Pinch zoom works');
+await mobile.locator('[data-mode=walk]').tap();const j=await mobile.locator('#joystick').boundingBox();assert.ok(j);const before=await mobile.evaluate(()=>window.__map.state.position);
+await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:j.x+j.width/2,y:j.y+10}]});await mobile.waitForFunction(z=>window.__map.state.position[2]<z-1,before[2],{timeout:25000});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.ok((await mobile.evaluate(()=>window.__map.state.position))[2]<before[2]-1,'Touch joystick moves');
+await mobile.screenshot({path:'artifacts/map-mobile-walk.jpg',quality:88});
+await mobile.setViewportSize({width:844,height:390});await mobile.locator('[data-mode=orbit]').tap();await mobile.waitForTimeout(300);await mobile.screenshot({path:'artifacts/map-mobile-landscape.jpg',quality:88});assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+console.log(JSON.stringify({base,initial,desktopMovement:{start,moved},mobile:await mobile.evaluate(()=>window.__map.state),errors,failed},null,2));
+await browser.close();assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
